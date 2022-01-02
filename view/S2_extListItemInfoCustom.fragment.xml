@@ -1,0 +1,9 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m">
+	<!-- This extension point can be used to add fields to ObjectListItem -->
+	<ObjectAttribute id="idSupplierID" text="Supplier ID : {SupplierID}"></ObjectAttribute>
+	<ObjectAttribute id="idPoNumber" text="{i18n>view.PurchaseOrder.purchaseOrderLabel} : {PoNumber}"></ObjectAttribute>
+	<ObjectAttribute id="idLandedCost" text="Landed Cost : {LANDCOST}"></ObjectAttribute>
+	<ObjectAttribute id="idIncoterm" visible="false"
+		text="{i18n>view.PurchaseOrder.incoTermsLabel} : {parts : [{path : 'INCO1'}, {path : 'INCO2'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.incoTermsFormatter'}"></ObjectAttribute>
+	<ObjectAttribute id="idPaymentTerm" text="Payment Term :{PAYTXT}" visible="false"></ObjectAttribute>
+</core:FragmentDefinition>

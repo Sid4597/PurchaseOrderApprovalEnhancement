@@ -1,0 +1,512 @@
+<!--
+    Copyright (C) 2009-2014 SAP SE or an SAP affiliate company. All rights reserved
+-->
+<core:View xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:form="sap.ui.layout.form" xmlns:layout="sap.ui.layout"
+	controllerName="ui.s2p.mm.purchorder.approve.view.S4" xmlns:chart="sap.viz.ui5" xmlns:c="sap.chart" xmlns:data="sap.chart.data"
+	xmlns:viz="sap.viz.ui5.controls" xmlns:viz.data="sap.viz.ui5.data" xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+	xmlns:suite="sap.suite.ui.commons">
+	<!-- S4 screen - Item Detail -->
+	<Page id="itemdetail" class="sapUiFioriObjectPage" enableScrolling="true">
+		<!-- ItemDetailHeader -->
+		<!-- Material -->
+		<ObjectHeader id="HeaderMaterial" introActive="false"
+			visible="{parts:[{path : 'ProductDetails/ItemType'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.materialVisibilityTrigger'}"
+			title="{Description}"
+			number="{parts: [{path : 'Value'}, {path : 'ItemCategory'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.formatNumberItemType'}"
+			numberUnit="{Currency}">
+			<attributes>
+				<ObjectAttribute id="MaterialObjectHeaderAttributeQuantity"
+					text="{parts:[{path : 'Quantity'}, {path : 'UnitDescription'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.quantityFormatter'}"
+					active="false"></ObjectAttribute>
+				<ObjectAttribute id="MaterialObjectHeaderAttributePricePerUnit"
+					text="{parts:[{path : 'QuantityForPPU'}, {path : 'UnitForPPUDescription'}, {path : 'PricePerUnit'}, {path : 'CurrencyForPPU'}, {path : 'ItemCategory'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.quantityPerUnitItemCategory'}"
+					active="false"></ObjectAttribute>
+				<ObjectAttribute id="MaterialObjectHeaderAttributeItemCategoryDescription"
+					text="{parts : [{path : 'ItemCategoryDescription'}, {path : 'ProductDetails/ItemType'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.itemCategoryFormatter'}"
+					active="false"></ObjectAttribute>
+			</attributes>
+			<statuses>
+				<ObjectStatus icon="sap-icon://locked" text="{i18n>view.PurchaseOrder.blocked}" state="Warning"
+					visible="{parts : [{path : 'Blocked'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.commonFieldVisibilityTrigger'}"/>
+			</statuses>
+			<!-- @ExtensionPoint extMaterialHeaderInfo: material header information -->
+			<core:ExtensionPoint name="extMaterialHeaderInfo"/>
+		</ObjectHeader>
+		<!-- Service -->
+		<ObjectHeader id="HeaderService" introActive="false"
+			visible="{parts:[{path : 'ProductDetails/ItemType'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.serviceVisibilityTrigger'}"
+			title="{Description}" number="{parts: [{path : 'Value'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.formatAmount'}"
+			numberUnit="{Currency}">
+			<attributes>
+				<ObjectAttribute id="ServiceObjectHeaderAttributeItemCategoryDescription" text="{ItemCategoryDescription}" active="false"></ObjectAttribute>
+			</attributes>
+			<statuses>
+				<ObjectStatus icon="sap-icon://locked" text="{i18n>view.PurchaseOrder.blocked}" state="Warning"
+					visible="{parts : [{path : 'Blocked'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.commonFieldVisibilityTrigger'}"/>
+			</statuses>
+			<!-- @ExtensionPoint extServiceHeaderInfo: service header information -->
+			<core:ExtensionPoint name="extServiceHeaderInfo"/>
+		</ObjectHeader>
+		<!-- Limit -->
+		<ObjectHeader id="HeaderLimit" introActive="false"
+			visible="{parts:[{path : 'ProductDetails/ItemType'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.limitVisibilityTrigger'}"
+			title="{LimitDetails/LimitDescription}"
+			number="{parts: [{path : 'Value'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.formatAmount'}" numberUnit="{Currency}">
+			<attributes>
+				<ObjectAttribute id="LimitObjectHeaderAttributeExpectedValue"
+					text="{parts:[{path : 'LimitDetails/ExpectedValue'}, {path : 'LimitDetails/Currency'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.expectedValueFormatter'}"
+					active="false"></ObjectAttribute>
+				<ObjectAttribute id="LimitObjectHeaderAttributeValueLimit"
+					text="{parts:[{path : 'LimitDetails/ValueLimit'}, {path : 'LimitDetails/IsValueUnLimited'}, {path : 'LimitDetails/Currency'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.valueLimitFormatter'}"
+					active="false"></ObjectAttribute>
+			</attributes>
+			<statuses>
+				<ObjectStatus icon="sap-icon://locked" text="{i18n>view.PurchaseOrder.blocked}" state="Warning"
+					visible="{parts : [{path : 'Blocked'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.commonFieldVisibilityTrigger'}"/>
+			</statuses>
+			<!-- @ExtensionPoint extLimitHeaderInfo: limit header information -->
+			<core:ExtensionPoint name="extLimitHeaderInfo"/>
+		</ObjectHeader>
+		<!-- end of Header (ItemDetailHeader) -->
+		<!-- Information area (ItemDetailInfo) -->
+		<form:Form id="ItemDetailInfoFormGeneral" title="{i18n>view.PurchaseOrder.information}">
+			<form:layout>
+				<form:ResponsiveLayout></form:ResponsiveLayout>
+			</form:layout>
+			<form:FormContainer>
+				<form:layoutData>
+					<layout:ResponsiveFlowLayoutData linebreak="true" margin="false"></layout:ResponsiveFlowLayoutData>
+				</form:layoutData>
+				<form:formElements>
+					<form:FormElement id="ItemDetailInfoMaterial"
+						visible="{parts:[{path : 'ProductDetails/MaterialID'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.materialIDVisibilityTrigger'}">
+						<form:layoutData>
+							<layout:ResponsiveFlowLayoutData linebreak="true" margin="false"></layout:ResponsiveFlowLayoutData>
+						</form:layoutData>
+						<form:label>
+							<Label text="{i18n>view.PurchaseOrder.material}"></Label>
+						</form:label>
+						<form:fields>
+							<Text id="matId" text="{ProductDetails/MaterialID}">
+								<layoutData>
+									<layout:ResponsiveFlowLayoutData weight="2"></layout:ResponsiveFlowLayoutData>
+								</layoutData>
+							</Text>
+						</form:fields>
+					</form:FormElement>
+					<form:FormElement id="ItemDetailInfoMaterialGroup"
+						visible="{parts:[{path : 'ProductDetails/MaterialGroup'}, {path : 'ProductDetails/MaterialGroupDescription'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.materialGroupVisibilityTrigger'}">
+						<form:layoutData>
+							<layout:ResponsiveFlowLayoutData linebreak="true" margin="false"></layout:ResponsiveFlowLayoutData>
+						</form:layoutData>
+						<form:label>
+							<Label text="{i18n>view.PurchaseOrder.materialGroup}"></Label>
+						</form:label>
+						<form:fields>
+							<Text
+								text="{parts:[{path : 'ProductDetails/MaterialGroup'}, {path : 'ProductDetails/MaterialGroupDescription'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.materialGroupFormatter'}">
+								<layoutData>
+									<layout:ResponsiveFlowLayoutData weight="2" alignItems="End"></layout:ResponsiveFlowLayoutData>
+								</layoutData>
+							</Text>
+						</form:fields>
+					</form:FormElement>
+					<form:FormElement id="ItemDetailInfoIncoterm"
+						visible="{parts:[{path : 'Incoterm'}, {path : 'IncotermLocation'}, {path : 'IncotermDescription'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.incoTermsVisibilityTrigger'}">
+						<form:layoutData>
+							<layout:ResponsiveFlowLayoutData linebreak="true" margin="false"></layout:ResponsiveFlowLayoutData>
+						</form:layoutData>
+						<form:label>
+							<Label text="{i18n>view.PurchaseOrder.incoTermsLabel}"></Label>
+						</form:label>
+						<form:fields>
+							<Text
+								text="{parts:[{path : 'Incoterm'}, {path : 'IncotermLocation'}, {path : 'IncotermDescription'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.incoTermsFormatter'}">
+								<layoutData>
+									<layout:ResponsiveFlowLayoutData weight="2" alignItems="End"></layout:ResponsiveFlowLayoutData>
+								</layoutData>
+							</Text>
+						</form:fields>
+					</form:FormElement>
+					<form:FormElement id="ItemDetailsInfoCurrentStock">
+						<form:layoutData>
+							<layout:ResponsiveFlowLayoutData linebreak="true" margin="false"/>
+						</form:layoutData>
+						<form:label>
+							<Label text="Current Stock"/>
+						</form:label>
+						<form:fields>
+							<Text id="txtCStk">
+								<layoutData>
+									<layout:ResponsiveFlowLayoutData weight="2"/>
+								</layoutData>
+							</Text>
+						</form:fields>
+					</form:FormElement>
+					<form:FormElement id="PlantID" visible="false">
+						<form:layoutData>
+							<layout:ResponsiveFlowLayoutData linebreak="true" margin="false"/>
+						</form:layoutData>
+						<form:label>
+							<Label text="Plant ID"/>
+						</form:label>
+						<form:fields>
+							<Text id="plantId" text="{DeliveryAddress/Plant}">
+								<layoutData>
+									<layout:ResponsiveFlowLayoutData weight="2"/>
+								</layoutData>
+							</Text>
+						</form:fields>
+					</form:FormElement>
+					<!-- @ExtensionPoint extInformation: Do not use this extension point. It has a duplicate name. Use extInformationS4 instead. -->
+					<core:ExtensionPoint name="extInformation"/>
+					<!-- @ExtensionPoint extInformationS4: information area-->
+					<core:ExtensionPoint name="extInformationS4"/>
+				</form:formElements>
+			</form:FormContainer>
+		</form:Form>
+		<form:Form id="ItemDetailInfoFormDelivery"
+			title="{parts:[{path : 'DeliveryDate'}, {path : 'DeliveryDateAlsoLater'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.deliveryHeaderFormatter'}">
+			<form:layout>
+				<form:ResponsiveLayout></form:ResponsiveLayout>
+			</form:layout>
+			<form:formContainers>
+				<form:FormContainer>
+					<form:layoutData>
+						<layout:ResponsiveFlowLayoutData linebreak="true" margin="false"></layout:ResponsiveFlowLayoutData>
+					</form:layoutData>
+					<form:formElements>
+						<form:FormElement id="ItemDetailInfoDeliveryPlant"
+							visible="{parts:[{path : 'DeliveryAddress/PlantName'}, {path : 'DeliveryAddress/CustomerName' }, {path : 'DeliveryAddress/CustomerId'}, {path : 'ProductDetails/ItemType'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.plantVisibilityTrigger'}">
+							<form:layoutData>
+								<layout:ResponsiveFlowLayoutData linebreak="true" margin="false"></layout:ResponsiveFlowLayoutData>
+							</form:layoutData>
+							<form:label>
+								<Label text="{i18n>view.PurchaseOrder.plantLabel}"></Label>
+							</form:label>
+							<form:fields>
+								<Text
+									text="{parts : [{path : 'DeliveryAddress/PlantName'}, {path : 'DeliveryAddress/Plant'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.commonIDFormatter'}">
+									<layoutData>
+										<layout:ResponsiveFlowLayoutData weight="2" alignItems="End"></layout:ResponsiveFlowLayoutData>
+									</layoutData>
+								</Text>
+							</form:fields>
+						</form:FormElement>
+						<form:FormElement id="ItemDetailInfoName"
+							visible="{parts:[{path : 'DeliveryAddress/CustomerName' }, {path : 'DeliveryAddress/CustomerId'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.freestyleNameVisibilityTrigger'}">
+							<form:layoutData>
+								<layout:ResponsiveFlowLayoutData linebreak="true" margin="false"></layout:ResponsiveFlowLayoutData>
+							</form:layoutData>
+							<form:label>
+								<Label text="{i18n>view.PurchaseOrder.freestyleAdressLabel}"></Label>
+							</form:label>
+							<form:fields>
+								<Text text="{DeliveryAddress/CustomerName}">
+									<layoutData>
+										<layout:ResponsiveFlowLayoutData weight="2" alignItems="End"></layout:ResponsiveFlowLayoutData>
+									</layoutData>
+								</Text>
+							</form:fields>
+						</form:FormElement>
+						<form:FormElement id="ItemDetailInfoCustomer"
+							visible="{parts:[{path : 'DeliveryAddress/CustomerName' }, {path : 'DeliveryAddress/CustomerId'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.customerNameVisibilityTrigger'}">
+							<form:layoutData>
+								<layout:ResponsiveFlowLayoutData linebreak="true" margin="false"></layout:ResponsiveFlowLayoutData>
+							</form:layoutData>
+							<form:label>
+								<Label text="{i18n>view.PurchaseOrder.customerLabel}"></Label>
+							</form:label>
+							<form:fields>
+								<Text
+									text="{parts:[{path : 'DeliveryAddress/CustomerName' }, {path : 'DeliveryAddress/CustomerId'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.customerNameFormatter'}">
+									<layoutData>
+										<layout:ResponsiveFlowLayoutData weight="2" alignItems="End"></layout:ResponsiveFlowLayoutData>
+									</layoutData>
+								</Text>
+							</form:fields>
+						</form:FormElement>
+						<form:FormElement id="ItemDetailInfoDeliveryAddress"
+							visible="{parts:[{path : 'DeliveryAddress/AddressString'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.commonFieldVisibilityTrigger'}">
+							<form:layoutData>
+								<layout:ResponsiveFlowLayoutData linebreak="true" margin="false"></layout:ResponsiveFlowLayoutData>
+							</form:layoutData>
+							<form:label>
+								<Label text="{i18n>view.PurchaseOrder.address}"></Label>
+							</form:label>
+							<form:fields>
+								<Text text="{DeliveryAddress/AddressString}">
+									<layoutData>
+										<layout:ResponsiveFlowLayoutData weight="2" alignItems="End"></layout:ResponsiveFlowLayoutData>
+									</layoutData>
+								</Text>
+							</form:fields>
+						</form:FormElement>
+					</form:formElements>
+				</form:FormContainer>
+			</form:formContainers>
+		</form:Form>
+		<!-- end of Information area (ItemDetailInfo) -->
+		<!-- Tables area (ItemDetailTables) -->
+		<!-- Item Notes -->
+		<List id="ListItemNotes" items="{Notes}" class='detailControlPadding detailControlPaddingSubsequent purchaseOrderTable'
+			showSeparators="None" headerDesign="Plain" headerText="{i18n>view.PurchaseOrder.notes}"
+			visible="{parts:[{path : 'NumberOfNotes'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.ItemNoteVisibilityTrigger'}">
+			<FeedListItem id="NoteTemplate" text="{Text}" senderPress="onSenderPress" class="viewPadding" info="{TypeDescription}"></FeedListItem>
+		</List>
+		<!--Item Attachments -->
+		<List id="ListItemAttachments" items="{Attachments}" headerText="{i18n>view.PurchaseOrder.attachments}" showSeparators="None"
+			headerDesign="Plain" class="purchaseOrderTable"
+			visible="{parts:[{path : 'NumberOfAttachments'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.ItemAttachmentVisibilityTrigger'}">
+			<StandardListItem press="onAttachment" type="Navigation" iconInset="false"
+				title="{parts : [{path : 'Description'},{path : 'MimeType'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.formatAttachmentDesc'}"
+				icon="{parts : [{path : 'MimeType'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.formatAttachmentIcon'}"
+				description="{parts : [{path : 'FileSize'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.formatAttachmentSize'}"></StandardListItem>
+		</List>
+		<!-- Limit -->
+		<Table id="LimitTable" noDataText="{i18n>view.PurchaseOrder.placeholder}" headerText="{i18n>view.PurchaseOrder.limit}" items="{Limits}"
+			class="purchaseOrderTable" headerDesign="Plain"
+			visible="{parts:[{path : 'LimitDetails/ValueLimit'}, {path : 'LimitDetails/ExpectedValue'}, {path : 'ProductDetails/ItemType'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.ItemLimitVisibilityTrigger'}">
+			<columns>
+				<Column id="LimitTableColumnName" alignItems="Start" demandPopin="true">
+					<header>
+						<Label text="{i18n>view.PurchaseOrder.name}"></Label>
+					</header>
+				</Column>
+				<Column id="LimitTableColumnLimitValue" alignItems="End" hAlign="Right" demandPopin="true" minScreenWidth="Tablet">
+					<header>
+						<Label text="{i18n>view.PurchaseOrder.valueLimit}"></Label>
+					</header>
+				</Column>
+				<Column id="LimitTableColumnExpectedValue" alignItems="End" hAlign="Right" demandPopin="true" minScreenWidth="Tablet">
+					<header>
+						<Label text="{i18n>view.PurchaseOrder.expectedValue}"></Label>
+					</header>
+				</Column>
+			</columns>
+			<ColumnListItem type="Navigation" press="onServiceLimitPress">
+				<cells>
+					<ObjectIdentifier title="{LimitDescription}"></ObjectIdentifier>
+					<Text
+						text="{parts:[{path : 'ValueLimit'}, {path : 'IsValueUnLimited'}, {path : 'Currency'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.valueLimitWithoutLabelFormatter'}"></Text>
+					<ObjectNumber number="{parts: [{path : 'ExpectedValue'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.formatAmount'}"
+						numberUnit="{Currency}"></ObjectNumber>
+				</cells>
+			</ColumnListItem>
+		</Table>
+		<!-- Service Lines NumberServiceLines -->
+		<Table id="NumberServiceLinesTable"
+			headerText="{parts:[{path : 'NumberServiceLines'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.serviceLinesTableHeader'}"
+			visible="{parts:[{path : 'NumberServiceLines'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.ItemServiceLineVisibilityTrigger'}"
+			noDataText="{i18n>view.PurchaseOrder.placeholder}" headerDesign="Plain" class="purchaseOrderTable" items="{ServiceLines}">
+			<columns>
+				<Column id="NumberServiceLinesTableColumnLabel" alignItems="Start" demandPopin="true">
+					<header>
+						<Label text="{i18n>view.PurchaseOrder.descriptionLabel}"></Label>
+					</header>
+				</Column>
+				<Column id="NumberServiceLinesTableColumnQuantity" alignItems="End" hAlign="Right" demandPopin="true" minScreenWidth="Tablet">
+					<header>
+						<Label text="{i18n>view.PurchaseOrder.quantity}"></Label>
+					</header>
+				</Column>
+				<Column id="NumberServiceLinesTableColumnSubtotal" alignItems="End" hAlign="Right" demandPopin="true" minScreenWidth="Tablet">
+					<header>
+						<Label text="{i18n>view.PurchaseOrder.subtotal}"></Label>
+					</header>
+				</Column>
+			</columns>
+			<ColumnListItem type="Navigation" press="onServiceItemPress">
+				<cells>
+					<ObjectIdentifier title="{Description}"></ObjectIdentifier>
+					<Text
+						text="{parts:[{path : 'Quantity'}, {path : 'UnitDescription'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.quantityFormatter'}"></Text>
+					<ObjectNumber number="{parts: [{path : 'Value'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.formatAmount'}"
+						numberUnit="{Currency}"></ObjectNumber>
+				</cells>
+			</ColumnListItem>
+		</Table>
+		<!-- Account Assignment -->
+		<layout:VerticalLayout
+			visible="{parts : [{path : 'Accountings'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.ItemAccountAssignmentVisibilityTrigger'}"
+			width="100%">
+			<mvc:XMLView id="AccountAssignmentCommonView" viewName="ui.s2p.mm.purchorder.approve.view.AccountAssignmentTable"></mvc:XMLView>
+		</layout:VerticalLayout>
+		<!-- end of Account Assignment -->
+		<!-- Subcontracting -->
+		<Table id="SubcontractingTable" headerText="{i18n>view.PurchaseOrder.components}" noDataText="{i18n>view.PurchaseOrder.placeholder}"
+			visible="{parts:[{path : 'ItemCategory'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.componentVisibilityTrigger'}"
+			headerDesign="Plain" class="purchaseOrderTable">
+			<columns>
+				<Column id="ComponentDescription" alignItems="Start" demandPopin="true" minScreenWidth="Tablet">
+					<header>
+						<Label text="{i18n>view.PurchaseOrder.descriptionLabel}"></Label>
+					</header>
+				</Column>
+				<Column id="ComponentQuantity" alignItems="End" hAlign="Right" demandPopin="true" minScreenWidth="Tablet">
+					<header>
+						<Label text="{i18n>view.PurchaseOrder.quantity}"></Label>
+					</header>
+				</Column>
+			</columns>
+		</Table>
+		<!-- Price Conditions -->
+		<Table id="PricingCondTable" headerText="{i18n>view.PurchaseOrder.pricingConditions}" noDataText="{i18n>view.PurchaseOrder.placeholder}"
+			visible="{parts:[{path : 'PricingConditions'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.PriceConditionsVisibilityTriggerItemType'}"
+			headerDesign="Plain" class="purchaseOrderTable" items="{PricingConditions/}">
+			<columns>
+				<Column id="PricingCondTableColumnLabel" alignItems="Start" demandPopin="true" minScreenWidth="Tablet">
+					<header>
+						<Label text="{i18n>view.PurchaseOrder.descriptionLabel}"></Label>
+					</header>
+				</Column>
+				<Column id="PricingCondTableColumnAmount" alignItems="End" hAlign="Right" demandPopin="true" minScreenWidth="Tablet">
+					<header>
+						<Label text="{i18n>view.PurchaseOrder.amount}"></Label>
+					</header>
+				</Column>
+			</columns>
+			<ColumnListItem type="Inactive">
+				<cells>
+					<ObjectIdentifier
+						title="{parts:[{path : 'Description'}, {path : 'PricingConditionType'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.IDFormatter'}"></ObjectIdentifier>
+					<ObjectNumber number="{parts: [{path : 'Value'}], formatter : 'ui.s2p.mm.purchorder.approve.util.Conversions.formatAmount'}"
+						numberUnit="{Currency}"></ObjectNumber>
+				</cells>
+			</ColumnListItem>
+		</Table>
+		<!-- end f Tables area (ItemDetailTables) -->
+		<SegmentedButton id="btnGraph" width="100%" selectionChange="onSelectionChange">
+			<items>
+				<SegmentedButtonItem text="Vendor Compare" id="btnVendorCompare" key="VendorCompare"/>
+				<SegmentedButtonItem text="Purchase History" id="btnPurchaseHistory" key="PurchaseHistory"/>
+				<SegmentedButtonItem text="Moving Average" id="btnMovingAvg" key="MovingAvg"/>
+				<SegmentedButtonItem text="Total Stock and Value" id="btnStockValue" key="StockValue"/>
+				<SegmentedButtonItem text="Quote Comparison" id="btnQuoteComparison" key="QuoteComparison"/>
+			</items>
+		</SegmentedButton>
+		<!--Vendor Comparison Graph-->
+		<chart:Line id="idVendorCompareGraph" width="100%" height="100%" visible="false"
+			vizProperties="{ title: {text : 'Vendor Comparison'},plotArea: {dataPoint: {invalidity: 'ignore'}}}"/>
+		<!--Purchase History Graph-->
+		<!--<viz:Popover id="idPurchaseHistoryPopOver" showLine="true" customDataControl="poHisTouch"></viz:Popover>-->
+		<viz:VizFrame id="idPurchaseHistoryGraph" xmlns="sap.viz" selectData="onPurHisPop" uiConfig="{applicationSet:'fiori'}"
+			vizProperties="{ title: {text : 'Purchase History'}}" visible="false" vizType="column" height="100%" width="100%">
+			<viz:dataset>
+				<viz.data:FlattenedDataset data="{PoHis>/PHdata}">
+					<viz.data:dimensions>
+						<viz.data:DimensionDefinition name="PurchaseOrderNumber" value="{path : 'PoHis>EBELN'}"/>
+					</viz.data:dimensions>
+					<viz.data:measures>
+						<viz.data:MeasureDefinition name="Price" value="{path : 'PoHis>NETPR'}"></viz.data:MeasureDefinition>
+					</viz.data:measures>
+				</viz.data:FlattenedDataset>
+			</viz:dataset>
+			<viz:feeds>
+				<viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Price"/>
+				<viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="PurchaseOrderNumber"/>
+			</viz:feeds>
+		</viz:VizFrame>
+		<!--Moving Average Graph-->
+		<viz:Popover id="idMovingAveragePopOver"></viz:Popover>
+		<viz:VizFrame id="idMovingAverageGraph" xmlns="sap.viz" uiConfig="{applicationSet:'fiori'}"
+			vizProperties="{ title: {text : 'Moving Average'}}" visible="false" vizType="line" height="100%" width="100%">
+			<viz:dataset>
+				<viz.data:FlattenedDataset data="{movAvg>/MVdata}">
+					<viz.data:dimensions>
+						<viz.data:DimensionDefinition name="Week" value="{movAvg>Week}"/>
+					</viz.data:dimensions>
+					<viz.data:measures>
+						<viz.data:MeasureDefinition name="movingAveragePrice" value="{movAvg>AvgPrice}"/>
+						<viz.data:MeasureDefinition name="Budget" value="{movAvg>PlanPrice1}"/>
+					</viz.data:measures>
+				</viz.data:FlattenedDataset>
+			</viz:dataset>
+			<viz:feeds>
+				<viz.feeds:FeedItem uid="valueAxis" type="Measure" values="movingAveragePrice,Budget"/>
+				<viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Week"/>
+			</viz:feeds>
+		</viz:VizFrame>
+		<!--Stock Value Graph-->
+		<viz:Popover id="idStockValuePopOver"></viz:Popover>
+		<viz:VizFrame id="idStockValueGraph" uiConfig="{applicationSet:'fiori'}" vizProperties="{ title: {text : 'Total Stock and Value'}}"
+			visible="false" vizType="dual_line" height="100%" width="100%">
+			<viz:dataset>
+				<viz.data:FlattenedDataset data="{stkVal>/SVdata}">
+					<viz.data:dimensions>
+						<viz.data:DimensionDefinition name="CurrentPeriod" value="{stkVal>CurrentPeriod}"/>
+						<viz.data:DimensionDefinition name="Year" value="{stkVal>Year}"/>
+					</viz.data:dimensions>
+					<viz.data:measures>
+						<viz.data:MeasureDefinition name="TotalStock" value="{stkVal>TotalStock}"></viz.data:MeasureDefinition>
+						<viz.data:MeasureDefinition name="StockValue" value="{stkVal>TotalValue}"></viz.data:MeasureDefinition>
+					</viz.data:measures>
+				</viz.data:FlattenedDataset>
+			</viz:dataset>
+			<viz:feeds>
+				<viz.feeds:FeedItem uid="valueAxis" type="Measure" values="StockValue"/>
+				<viz.feeds:FeedItem uid="valueAxis2" type="Measure" values="TotalStock"/>
+				<viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Year,CurrentPeriod"/>
+			</viz:feeds>
+		</viz:VizFrame>
+		<!--Quote Comparison Table-->
+		<Table id="idQuoteCompareTable" items="{QuoteComp>/QCdata}" noDataText="NO DATA" visible="false">
+			<columns>
+				<Column id="Col1">
+					<header>
+						<Label text="Description"/>
+					</header>
+				</Column>
+				<Column id="Col2">
+					<header>
+						<Label text="PO"/>
+					</header>
+				</Column>
+				<Column id="Col3">
+					<header>
+						<Label text="Budget"/>
+					</header>
+				</Column>
+				<Column id="Col4">
+					<header>
+						<Label text="RFQ1"/>
+					</header>
+				</Column>
+				<Column id="Col5">
+					<header>
+						<Label text="RFQ2"/>
+					</header>
+				</Column>
+				<Column id="Col6">
+					<header>
+						<Label text="RFQ3"/>
+					</header>
+				</Column>
+				<Column id="Col7">
+					<header>
+						<Label text="RFQ4"/>
+					</header>
+				</Column>
+				<Column id="Col8">
+					<header>
+						<Label text="RFQ5"/>
+					</header>
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem >
+					<cells>
+						<Text text="{QuoteComp>Description}"/>
+						<Text text="{QuoteComp>PreviousPO}"/>
+						<Text text="{QuoteComp>Budget}"/>
+						<Text text="{QuoteComp>RFQ1}"/>
+						<Text text="{QuoteComp>RFQ2}"/>
+						<Text text="{QuoteComp>RFQ3}"/>
+						<Text text="{QuoteComp>RFQ4}"/>
+						<Text text="{QuoteComp>RFQ5}"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</Page>
+</core:View>

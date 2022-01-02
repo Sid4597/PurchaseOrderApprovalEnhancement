@@ -1,0 +1,8 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Popover id="idPurchaseHistoryPopOver" class="sapUiResponsivePadding--header">
+		<content>
+			<Text id="txtDate"/>
+			<Text id="txtPrice"/>
+		</content>
+	</Popover>
+</core:FragmentDefinition>
